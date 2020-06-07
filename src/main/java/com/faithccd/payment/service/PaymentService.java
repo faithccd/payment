@@ -10,7 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.faithccd.payment.dao.PaymentDao;
+import com.faithccd.payment.exception.BusinessException;
+import com.faithccd.payment.exception.ErrorCode;
 import com.faithccd.security.AES256Util;
+import com.faithccd.utils.Utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
@@ -80,13 +83,13 @@ public class PaymentService {
 		}
 		
 		if (vat.compareTo(amount) == 1)
-			throw new Exception("VAT can't be greater then payment amount !!");
+			throw new BusinessException("VAT can't be greater then payment amount !!",ErrorCode.INVAILD_VAT);
 		
 		if ("CANCEL".equals(map.get("status"))) {
 			if (amount.compareTo(balanceAmount) == 1)
-				throw new Exception("Cancel Amount can't be greater then balance amount !!");
+				throw new BusinessException("Cancel Amount can't be greater then balance amount !!",ErrorCode.INVAILD_CANCEL_AMT);
 			if (vat.compareTo(balanceVat) == 1)
-				throw new Exception("Cancel VAT can't be greater then balance VAT !!");
+				throw new BusinessException("Cancel VAT can't be greater then balance VAT !!",ErrorCode.INVAILD_CANCEL_VAT);
 		}	
 		
 		map.put("vat", vat);
@@ -161,8 +164,14 @@ public class PaymentService {
 		logger.debug("plainCardStr {}", plainCardStr);
 		
 		if (null != plainCardStr && plainCardStr.length() == 25) {
-			String[] arrCardInfo = plainCardStr.split(",");				
-			map.put("cardNo",arrCardInfo[0]);
+			String[] arrCardInfo = plainCardStr.split(",");
+			String cardNo = arrCardInfo[0].replace("000000", "");
+			if (16 == cardNo.length()) {
+				cardNo = Utils.maskCardNumber(cardNo, "######*******###");
+			} else {
+				cardNo = Utils.maskCardNumber(cardNo, "####****##");
+			}
+			map.put("cardNo",cardNo);			
 			map.put("cardExpireDate",arrCardInfo[1]);
 			map.put("cardCvc",Integer.parseInt(arrCardInfo[2]));
 		}

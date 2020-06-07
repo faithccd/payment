@@ -58,7 +58,7 @@
 		<![CDATA[
 			SELECT
 				unique_id 
-				,unique_id_paymentmap
+				,unique_id_payment
 				,card_information
 				,installment_months
 				,amount

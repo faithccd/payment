@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="false">
+<property name="LOG_HOME" value="/nice/rclips/log" />
+<timestamp key="byDate" datePattern="yyyyMMdd"/>
+  <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <appender name="fileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${LOG_HOME}/rclips-trans.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${LOG_HOME}/rclips-trans.%d{yyyy-MM-dd}</fileNamePattern>
+      <maxHistory>90</maxHistory>
+      <!--
+      <totalSizeCap>20GB</totalSizeCap>
+      -->
+    </rollingPolicy>
+    <encoder>
+      <pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <root level="INFO">
+    <appender-ref ref="consoleAppender"/>
+    <!-- 
+    <appender-ref ref="fileAppender"/>
+     -->
+  </root>
+</configuration>
