@@ -74,18 +74,23 @@ public class PaymentService {
 		BigDecimal amount = new BigDecimal( (Integer) map.get("amount")  );
 		BigDecimal vat = BigDecimal.ZERO;
 		
-		if (null != map.get("vat") && (Integer)map.get("vat") > 0) {
+		if (null != map.get("vat")) {
 			vat = new BigDecimal( (Integer) map.get("vat")  );
 		} else {		
 			if (amount.compareTo(new BigDecimal(100)) == 1 ) {				
-				vat = amount.divide(new BigDecimal(11),BigDecimal.ROUND_UP);
+				vat = amount.divide(new BigDecimal(11),BigDecimal.ROUND_HALF_UP);
 			}
 		}
 		
 		if (vat.compareTo(amount) == 1)
 			throw new BusinessException("VAT can't be greater then payment amount !!",ErrorCode.INVAILD_VAT);
 		
-		if ("CANCEL".equals(map.get("status"))) {
+		if ("CANCEL".equals(map.get("status"))) {			
+			// 부분취소시 부가가치세 null 일경우 남은 부가가치세 자동결제
+			if (null == map.get("vat")) {
+				if (vat.compareTo(balanceVat) == 1) 
+					vat = balanceVat;
+			}
 			if (amount.compareTo(balanceAmount) == 1)
 				throw new BusinessException("Cancel Amount can't be greater then balance amount !!",ErrorCode.INVAILD_CANCEL_AMT);
 			if (vat.compareTo(balanceVat) == 1)
