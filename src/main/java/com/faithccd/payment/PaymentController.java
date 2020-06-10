@@ -65,15 +65,17 @@ public class PaymentController {
 		
 		map = (ConcurrentHashMap<String, Object>) service.getPayment(map);		
 		
-		Map<String,Object> result = new HashMap<String,Object>();
+		//카드정보 세팅
 		Map<String,Object> cardInfo = new HashMap<String,Object>();
 		cardInfo.put("cardNo", map.get("cardNo"));
 		cardInfo.put("cardExpireDate", map.get("cardExpireDate"));
 		cardInfo.put("cardCvc", map.get("cardCvc"));
+		//금액정보 세팅
 		Map<String,Object> amountInfo = new HashMap<String,Object>();
 		amountInfo.put("amount", map.get("AMOUNT"));
 		amountInfo.put("vat", map.get("VAT"));		
-		
+		//결과부 최종 세팅
+		Map<String,Object> result = new HashMap<String,Object>();
 		result.put("uniqueId", map.get("uniqueId"));
 		result.put("cardInfo", cardInfo);
 		result.put("status", map.get("STATUS"));

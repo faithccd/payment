@@ -27,6 +27,7 @@ public class PaymentServiceTest {
 	@Autowired
 	private PaymentService service;	
 	
+//	@Ignore
 	@Test 
 	public void payment_test1() throws Exception { 
 		
@@ -139,6 +140,7 @@ public class PaymentServiceTest {
 
 	}
 	
+//	@Ignore	
 	@Test 
 	public void payment_test2_cancel_case2() throws Exception {
 		
@@ -229,7 +231,7 @@ public class PaymentServiceTest {
 		});
 		
 		//given 취소값 세팅 10000, null
-		cancel.clear();		
+		cancel.clear();
 		cancel.put("uniqueIdPayment", unique_id);	
 		cancel.put("amount", 10000);
 		cancel.put("status", "CANCEL");
@@ -238,6 +240,33 @@ public class PaymentServiceTest {
 		//then 성공
 		assertThat(cancel.get("unique_id")).isNotNull();
 
-	}	
+	}
+	
+	@Test 
+	public void payment_test3() throws Exception {
+		//give 결제값 세팅
+		Map<String, Object> test = new HashMap<String, Object>();
+		test.put("cardNo", "1111222233334444");
+		test.put("cardExpireDate", "0425");
+		test.put("cardCvc", 111);
+		test.put("installmentMonths", 0);
+		test.put("vat", 1000);
+		test.put("amount", 11000);
+		test.put("status", "PAYMENT");
+		
+		//when 결제
+		test = service.insertPayment(test);
+		
+		//give key 값 세팅
+		Map<String, Object> get = new HashMap<String, Object>();
+		get.put("uniqueId", test.get("unique_id"));
+		
+		//when 조회
+		get = service.getPayment(get);
+		
+		//then 성공
+		assertThat(get.get("UNIQUE_ID")).isNotNull();
+		
+	}
 
 }

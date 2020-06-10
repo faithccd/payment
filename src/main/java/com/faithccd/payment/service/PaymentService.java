@@ -39,7 +39,8 @@ public class PaymentService {
 			cardExpireDate = (String)map.get("cardExpireDate");
 			cardCvc = (int)map.get("cardCvc");			
 		} else {
-			String encryptCardStr = "";
+			String encryptCardStr = "";			
+			//취소시 유효성 검사를 위해 결제금액 및 부가가치세 누적 금액 계산   
 			List<Map<String, Object>> list = dao.getPaymentInfo(map);
 			for (Map<String, Object> payment : list) {
 				if ("PAYMENT".equals(payment.get("STATUS"))) {
@@ -51,7 +52,7 @@ public class PaymentService {
 					balanceVat = balanceVat.subtract(new BigDecimal( (Long) payment.get("VAT")  ));					
 				}
 			}
-			
+			// 취소시 결제 시 암호화된 카드정보 얻어옴
 			String plainCardStr = aes256.decrypt(encryptCardStr);
 			if (null != plainCardStr && plainCardStr.length() == 25) {
 				String[] arrCardInfo = plainCardStr.split(",");
@@ -60,11 +61,12 @@ public class PaymentService {
 				cardCvc = Integer.parseInt(arrCardInfo[2]);					
 				map.put("cardNo",cardNo);
 				map.put("cardExpireDate",cardExpireDate);
-				map.put("cardCvc",cardCvc);	
-				map.put("installmentMonths", 0);			
+				map.put("cardCvc",cardCvc);
+				map.put("installmentMonths", 0); // 취소시 할부개월수 일시불 처리
 			}
 		}
 		
+		// 신용번호, 유효기간, CVC 정보 콤마(,) 구분자로 문자열 생성후 암호 
 		String plainCardStr = cardNo+","+cardExpireDate+","+cardCvc;
 		logger.debug("plainCardStr {}", plainCardStr);
 		String encryptCardStr = aes256.encrypt(plainCardStr);
@@ -77,6 +79,7 @@ public class PaymentService {
 		if (null != map.get("vat")) {
 			vat = new BigDecimal( (Integer) map.get("vat")  );
 		} else {		
+			// 부가가치세 안남길경우 자동계산
 			if (amount.compareTo(new BigDecimal(100)) == 1 ) {				
 				vat = amount.divide(new BigDecimal(11),BigDecimal.ROUND_HALF_UP);
 			}
@@ -86,13 +89,16 @@ public class PaymentService {
 			throw new BusinessException("VAT can't be greater then payment amount !!",ErrorCode.INVAILD_VAT);
 		
 		if ("CANCEL".equals(map.get("status"))) {			
-			// 부분취소시 부가가치세 null 일경우 남은 부가가치세 자동결제
+			// 취소시 부가가치세 null 일경우 남은 부가가치세 자동결제
 			if (null == map.get("vat")) {
 				if (vat.compareTo(balanceVat) == 1) 
 					vat = balanceVat;
 			}
+			
+			// 취소시 취소금액이 남은결제금액 보다 크면 안된다.
 			if (amount.compareTo(balanceAmount) == 1)
 				throw new BusinessException("Cancel Amount can't be greater then balance amount !!",ErrorCode.INVAILD_CANCEL_AMT);
+			// 취소시 부가가치세가 남은 부가가치세 보다 크면 안된다.
 			if (vat.compareTo(balanceVat) == 1)
 				throw new BusinessException("Cancel VAT can't be greater then balance VAT !!",ErrorCode.INVAILD_CANCEL_VAT);
 		}	
@@ -110,6 +116,9 @@ public class PaymentService {
 		
 	}
 	
+	/*
+	 * 카드사 전송 문자열
+	 */
 	public Map<String, Object> sendPayment(Map<String, Object> map) {		
 		
 		logger.debug("status is [{}]",StringUtils.rightPad((String)map.get("status"),10," "));
@@ -154,7 +163,7 @@ public class PaymentService {
 		
 		map.put("sendString", send);
 		
-		dao.sendPayment(map);
+		dao.sendPayment(map);	
 		
 		return  map;
 	}
@@ -163,6 +172,7 @@ public class PaymentService {
 		Map<String, Object> mapPayment = dao.getPayment(map);
 		map.putAll(mapPayment);
 		
+		// 암호화된 카드정보 얻어옴
 		String encryptCardStr = ((String)mapPayment.get("CARD_INFORMATION"));
 		logger.debug("encryptCardStr {}", encryptCardStr);
 		String plainCardStr = aes256.decrypt(encryptCardStr);
@@ -171,6 +181,7 @@ public class PaymentService {
 		if (null != plainCardStr && plainCardStr.length() == 25) {
 			String[] arrCardInfo = plainCardStr.split(",");
 			String cardNo = arrCardInfo[0].replace("000000", "");
+			// 카드번호 마스킹 처리
 			if (16 == cardNo.length()) {
 				cardNo = Utils.maskCardNumber(cardNo, "######*******###");
 			} else {
