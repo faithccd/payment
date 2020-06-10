@@ -163,7 +163,7 @@ public class PaymentService {
 		
 		map.put("sendString", send);
 		
-		dao.sendPayment(map);	
+		dao.sendPayment(map);
 		
 		return  map;
 	}
