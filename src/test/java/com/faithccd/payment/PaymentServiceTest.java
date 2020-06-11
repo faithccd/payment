@@ -29,7 +29,7 @@ public class PaymentServiceTest {
 	
 //	@Ignore
 	@Test 
-	public void payment_test1() throws Exception { 
+	public void 결제_문자열전송_test() throws Exception { 
 		
 		//give 결제값 세팅
 		Map<String, Object> test = new HashMap<String, Object>();
@@ -55,7 +55,7 @@ public class PaymentServiceTest {
 	
 //	@Ignore
 	@Test 
-	public void payment_test2_cancel_case1() throws Exception {
+	public void 결제취소_test_case1() throws Exception {
 		
 		//given 결제 세팅
 		Map<String, Object> pay = new HashMap<String, Object>();
@@ -142,7 +142,7 @@ public class PaymentServiceTest {
 	
 //	@Ignore	
 	@Test 
-	public void payment_test2_cancel_case2() throws Exception {
+	public void 결제취소_test_case2() throws Exception {
 		
 		//given 결제 세팅
 		Map<String, Object> pay = new HashMap<String, Object>();
@@ -194,7 +194,7 @@ public class PaymentServiceTest {
 	
 //	@Ignore
 	@Test 
-	public void payment_test2_cancel_case3() throws Exception {
+	public void 결제취소_test_case3() throws Exception {
 		
 		//given 결제 세팅
 		Map<String, Object> pay = new HashMap<String, Object>();
@@ -244,7 +244,7 @@ public class PaymentServiceTest {
 	
 //	@Ignore	
 	@Test 
-	public void payment_test3() throws Exception {
+	public void 조회_test() throws Exception {
 		//give 결제값 세팅
 		Map<String, Object> test = new HashMap<String, Object>();
 		test.put("cardNo", "1111222233334444");
