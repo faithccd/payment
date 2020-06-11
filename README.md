@@ -1,6 +1,6 @@
 
 # Rest API 기반 결제시스템 프로토타입
-
+Spring framework 기반으로 구성된 RESTful json 
 
 ## 빌드 및 실행 방법
 
@@ -58,3 +58,54 @@ Column | Name | type | Key | Desc
 unique_id | 관리번호 | BIGINT | key |  auto_increment
 send_string | 전송문자열 | VARCHAR2(450) |  |  
 timestamp | 생성시점 | BIGINT |  
+
+## API 기능 명세
+
+Host Address : http://localhost:8080
+
+### 결제 API, /payment/payment
+Request
+```sh
+{
+ "cardNo":"1111222233334444",
+ "cardExpireDate":"0425",
+ "cardCvc":111,
+ "installmentMonths":0,
+ "vat":1000,
+ "amount":11000
+}
+```
+Response
+```sh
+{
+    "unique_id": 1
+}
+```
+
+### 결제취소 API, /payment/cancel
+Request
+```sh
+{
+ "uniqueIdPayment":1, 
+ "amount":100
+}
+```
+Response
+```sh
+{
+    "unique_id": 3
+}
+```
+
+### Error Code Define
+Status | Code | Message
+------ | ---- | -------
+400 | C001 | Invalid Input Value
+405 | C002 | Invalid Input Value
+400 | C003 | Entity Not Found
+500 | C004 | Server Error
+400 | C005 | Invalid Type Value
+403 | C006 | Access is Denied
+500 | P001 | VAT can't be greater then payment amount !!
+500 | P002 | Cancel Amount can't be greater then balance amount !!
+500 | P003 | Cancel VAT can't be greater then balance VAT !!
