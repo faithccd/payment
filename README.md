@@ -1,8 +1,9 @@
 
 # Rest API 기반 결제시스템 프로토타입
-Spring framework 기반으로 구성된 RESTful json 
-
-
+Spring framework 기반으로 구성된 RESTful 서비스 입니다.
+request 및 response 는 JSON 문서 포맷 입니다.
+H2 Embeded 를 활용하여 Application 기동시 table schema 자동 생성 됩니다.
+ORM 은 MyBatis 를 활용하였습니다. 추후 JPA 로 작성 예정입니다.
 
 ## Table of Contents
 1. [빌드 및 실행 방법](#빌드-및-실행-방법)
