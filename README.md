@@ -63,16 +63,16 @@ timestamp | 생성시점 | BIGINT |
 
 Host Address : http://localhost:8080
 
-### 결제 API, /payment/payment
+### 결제 , /payment/payment
 Request
 ```sh
 {
- "cardNo":"1111222233334444",
- "cardExpireDate":"0425",
- "cardCvc":111,
- "installmentMonths":0,
- "vat":1000,
- "amount":11000
+    "cardNo":"1111222233334444",
+    "cardExpireDate":"0425",
+    "cardCvc":111,
+    "installmentMonths":0,
+    "vat":1000,
+    "amount":11000
 }
 ```
 Response
@@ -82,12 +82,12 @@ Response
 }
 ```
 
-### 결제취소 API, /payment/cancel
+### 결제취소, /payment/cancel
 Request
 ```sh
 {
- "uniqueIdPayment":1, 
- "amount":100
+    "uniqueIdPayment":1, 
+    "amount":100
 }
 ```
 Response
@@ -97,7 +97,41 @@ Response
 }
 ```
 
-### Error Code Define
+### 조회, /payment/get
+Request
+```sh
+{
+   "uniqueId":1
+}
+```
+Response
+```sh
+{
+    "cardInfo": {
+        "cardCvc": 111,
+        "cardExpireDate": "0425",
+        "cardNo": "111122*******444"
+    },
+    "amountInfo": {
+        "amount": 11000,
+        "vat": 1000
+    },
+    "uniqueId": 1,
+    "status": "PAYMENT"
+}
+```
+
+### Exception Response
+```sh
+{
+    "message": " Cancel Amount can't be greater then balance amount !!",
+    "status": 400,
+    "errors": [],
+    "code": "P002"
+}
+```
+
+### Error code define
 Status | Code | Message
 ------ | ---- | -------
 400 | C001 | Invalid Input Value
