@@ -12,10 +12,10 @@ Spring framework 기반으로 구성된 RESTful json
 
 ## 빌드 및 실행 방법
 
-컴파일 및 빌드
+컴파일 및 빌드 / 테스트
 
 ```sh
-mvn clean compile
+mvn clean compile test
 ```
 
 Maven 에서 직접 실행
