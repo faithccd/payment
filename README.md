@@ -2,6 +2,12 @@
 # Rest API 기반 결제시스템 프로토타입
 Spring framework 기반으로 구성된 RESTful json 
 
+## 목차
+[1.빌드 및 실행 방법](#빌드-및-실행 방법)
+[2.개발 환경 및 프로젝트 구성](#개발-환경-및-프로젝트-구성)
+[3.테이블 레이아웃](#테이블-레이아웃)
+
+
 ## 빌드 및 실행 방법
 
 컴파일 및 빌드
@@ -35,7 +41,6 @@ Spring Boot 2.2.5 starter 를 활용하였기 때문에 JDK 1.8 이상 환경이
 * [Jackson 2.10.2](https://www.jax.org//)
 
 ## 문제해결
-
 
 ## 테이블 레이아웃
 Application 실행시 Embedded type H2 로 아래 테이블 스키마 자동 생성 시킴
