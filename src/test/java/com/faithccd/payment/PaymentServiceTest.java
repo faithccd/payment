@@ -242,6 +242,7 @@ public class PaymentServiceTest {
 
 	}
 	
+//	@Ignore	
 	@Test 
 	public void payment_test3() throws Exception {
 		//give 결제값 세팅

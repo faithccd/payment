@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.faithccd.payment.dao.PaymentDao;
@@ -26,7 +27,11 @@ public class PaymentService {
 	@Autowired
 	private AES256Util aes256;
 	
-	public Map<String, Object> insertPayment(Map<String, Object> map) throws Exception {
+	/*
+	 * 결제처리 및 취소처리
+	 * 동시 중복 처리 안되게 synchronized 키워드로 동기화
+	 */
+	public synchronized Map<String, Object> insertPayment(Map<String, Object> map) throws Exception {
 	
 		String cardNo = null;
 		String cardExpireDate = null;
@@ -86,7 +91,7 @@ public class PaymentService {
 		}
 		
 		if (vat.compareTo(amount) == 1)
-			throw new BusinessException("VAT can't be greater then payment amount !!",ErrorCode.INVAILD_VAT);
+			throw new BusinessException(ErrorCode.INVAILD_VAT);
 		
 		if ("CANCEL".equals(map.get("status"))) {			
 			// 취소시 부가가치세 null 일경우 남은 부가가치세 자동결제
@@ -97,10 +102,10 @@ public class PaymentService {
 			
 			// 취소시 취소금액이 남은결제금액 보다 크면 안된다.
 			if (amount.compareTo(balanceAmount) == 1)
-				throw new BusinessException("Cancel Amount can't be greater then balance amount !!",ErrorCode.INVAILD_CANCEL_AMT);
+				throw new BusinessException(ErrorCode.INVAILD_CANCEL_AMT);
 			// 취소시 부가가치세가 남은 부가가치세 보다 크면 안된다.
 			if (vat.compareTo(balanceVat) == 1)
-				throw new BusinessException("Cancel VAT can't be greater then balance VAT !!",ErrorCode.INVAILD_CANCEL_VAT);
+				throw new BusinessException(ErrorCode.INVAILD_CANCEL_VAT);
 		}	
 		
 		map.put("vat", vat);
@@ -117,7 +122,7 @@ public class PaymentService {
 	}
 	
 	/*
-	 * 카드사 전송 문자열
+	 * 카드사 전송되는 문자열 처리 
 	 */
 	public Map<String, Object> sendPayment(Map<String, Object> map) {		
 		
@@ -170,6 +175,10 @@ public class PaymentService {
 	
 	public Map<String, Object> getPayment(Map<String, Object> map) throws Exception {
 		Map<String, Object> mapPayment = dao.getPayment(map);
+		
+		if (null == mapPayment)
+			throw new BusinessException(ErrorCode.ENTITY_NOT_FOUND);
+		
 		map.putAll(mapPayment);
 		
 		// 암호화된 카드정보 얻어옴

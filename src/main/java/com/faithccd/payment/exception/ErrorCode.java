@@ -14,9 +14,9 @@ public enum ErrorCode {
     HANDLE_ACCESS_DENIED(403, "C006", "Access is Denied"),
     
     // RULE        
-    INVAILD_VAT(400, "P001", " VAT can't be greater then payment amount !!"),
-    INVAILD_CANCEL_AMT(400, "P002", " Cancel Amount can't be greater then balance amount !!"),
-    INVAILD_CANCEL_VAT(400, "P003", " Cancel VAT can't be greater then balance VAT !!")
+    INVAILD_VAT(500, "P001", " VAT can't be greater then payment amount !!"),
+    INVAILD_CANCEL_AMT(500, "P002", " Cancel Amount can't be greater then balance amount !!"),
+    INVAILD_CANCEL_VAT(500, "P003", " Cancel VAT can't be greater then balance VAT !!")
     ;
 	
     private final String code;
